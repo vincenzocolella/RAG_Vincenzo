@@ -41,11 +41,18 @@ The app responds using only the information found in your documents.
 ## 📁 Project Structure (Simplified)
 
 rag_vincenzo/
-├── app.py              # Streamlit application
-├── data/               # Documents to be analyzed
-├── embeddings/         # Generated FAISS index
-├── utils/              # Functions to read files, create embeddings, etc.
-└── requirements.txt    # List of required libraries
+
+├── app.py                # Streamlit application
+
+├── data/                 # Documents to be analyzed
+
+├── embeddings/           # Generated FAISS index
+
+├── utils/                # Functions to read files, create embeddings, etc.
+
+└── requirements.txt      # List of required libraries
+
+
 ## 📌 Important Notes
 If the FAISS index is not present, the app generates it automatically.
 
