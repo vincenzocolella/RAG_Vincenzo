@@ -7,7 +7,6 @@ ENV/
 # File di configurazione locali con chiavi API, credenziali, ecc
 config/.env
 credentials_google.json
-log_domande.txt
 
 # File di cache e temporanei Python
 __pycache__/
