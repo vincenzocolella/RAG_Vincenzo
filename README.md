@@ -1,62 +1,67 @@
-# 🧠 Applicazione RAG su documenti personali
+# 🧠 RAG Application on Personal Documents
+This application was developed to query personal documents such as PDFs, Word files, and Google Calendars using natural language, through a RAG (Retrieval-Augmented Generation) system. The goal is to allow users to ask questions and receive answers based on their own personal data.
 
-Questa applicazione è stata sviluppata per interrogare documenti personali come PDF, file Word e calendari Google in linguaggio naturale, utilizzando un sistema di **RAG (Retrieval-Augmented Generation)**. L'obiettivo è permettere all'utente di porre domande e ricevere risposte basate sui propri dati personali.
+## 🔍 What the Application Does
+Loads documents from a folder (PDF and DOCX).
 
----
+Extracts textual content from these files.
 
-## 🔍 Cosa fa l'applicazione
+Generates semantic embeddings (i.e., vector representations of the meaning of the texts).
 
-1. Carica documenti da una cartella (PDF e DOCX).
-2. Estrae il contenuto testuale da questi file.
-3. Genera **embedding semantici** (cioè rappresentazioni vettoriali del significato dei testi).
-4. Salva questi embedding in un **indice FAISS**, che consente di ritrovare velocemente i documenti più rilevanti rispetto a una domanda.
-5. Quando l'utente scrive una domanda, l'app cerca nei documenti quelli più pertinenti e li invia al modello di linguaggio per generare una risposta.
+Saves these embeddings in a FAISS index, allowing fast retrieval of the most relevant documents in response to a question.
 
----
+When the user writes a question, the app searches for the most relevant documents and sends them to the language model to generate a response.
 
-## 🧱 Stack tecnologico utilizzato
+## 🧱 Technology Stack Used
+Python: main development language.
 
-- **Python**: linguaggio principale per lo sviluppo.
-- **Streamlit**: per creare l’interfaccia web in modo semplice e veloce.
-- **FAISS** (Facebook AI Similarity Search): per salvare e interrogare l’indice vettoriale dei documenti.
-- **Modelli di linguaggio** (via Hugging Face o OpenAI): per generare le risposte in linguaggio naturale.
-- **PyMuPDF / python-docx**: per leggere il contenuto di file PDF e Word.
-- **Google Calendar API** (opzionale): per caricare e interrogare anche eventi del calendario.
-- **dotenv**: per la gestione delle chiavi API in modo sicuro.
-- **Pandas, NumPy, etc.**: per la gestione dei dati e supporto generale.
+Streamlit: to quickly and easily build the web interface.
 
----
+FAISS (Facebook AI Similarity Search): to store and query the vector index of the documents.
 
-## ▶️ Come si usa
+Language Models (via Hugging Face or OpenAI): to generate natural language responses.
 
-1. Si mettono i propri file nella cartella `data/`.
-2. L’app genera automaticamente un indice vettoriale alla prima esecuzione.
-3. Si accede a una semplice interfaccia web dove si può scrivere una domanda.
-4. L'app risponde usando solo le informazioni presenti nei tuoi documenti.
+PyMuPDF / python-docx: to read the content of PDF and Word files.
 
----
+Google Calendar API (optional): to load and query calendar events.
 
-## 📁 Struttura del progetto (semplificata)
+dotenv: for secure API key management.
+
+Pandas, NumPy, etc.: for data handling and general support.
+
+## ▶️ How to Use It
+Place your files in the data/ folder.
+
+The app automatically generates a vector index on first run.
+
+Access a simple web interface where you can type your question.
+
+The app responds using only the information found in your documents.
+
+## 📁 Project Structure (Simplified)
 
 rag_vincenzo/
-├── app.py # applicazione Streamlit
-├── data/ # documenti da analizzare
-├── embeddings/ # indice FAISS generato
-├── utils/ # funzioni per leggere file, creare embedding, ecc.
-└── requirements.txt # librerie usate
+├── app.py              # Streamlit application
+├── data/               # Documents to be analyzed
+├── embeddings/         # Generated FAISS index
+├── utils/              # Functions to read files, create embeddings, etc.
+└── requirements.txt    # List of required libraries
+## 📌 Important Notes
+If the FAISS index is not present, the app generates it automatically.
+
+The interface is designed for personal and local use, not for production.
+
+You can easily modify the embedding models or the document sources.
+
+## ✍️ Author
+Developed by Vincenzo Colella
+Data Engineer, Switzerland
 
 
----
 
-## 📌 Note importanti
 
-- Se non è presente l’indice FAISS, l’app lo crea automaticamente.
-- L’interfaccia è pensata per uso personale e locale, non in produzione.
-- Puoi modificare facilmente i modelli di embedding o la sorgente dei documenti.
 
----
 
-## ✍️ Autore
 
-Sviluppato da **Vincenzo Colella**  
-Lead Data Engineer, Svizzera  
+
+
