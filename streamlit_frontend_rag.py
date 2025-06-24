@@ -7,13 +7,9 @@ import google.generativeai as genai
 import pathlib
 import datetime
 
-
-
 today = datetime.date.today().isoformat()
 
-
-
-# Percorso al file della chiave
+# Path to the API key file
 api_key_path = os.path.join("config", "google_api")
 try:
     with open(api_key_path, "r") as f:
@@ -22,7 +18,7 @@ except FileNotFoundError:
     api_key = None
 
 if not api_key:
-    st.error("⚠️ Chiave API Gemini non trovata. Inseriscila in config/.env o nel codice.")
+    st.error("⚠️ Gemini API key not found. Please place it in config/.env or directly in the code.")
     st.stop()
 
 genai.configure(api_key=api_key)
@@ -34,7 +30,7 @@ def load_faiss():
     index_path = base_dir / "embeddings" / "faiss_index_hf"
 
     if not index_path.exists():
-        st.error(f"Indice FAISS non trovato in {index_path}")
+        st.error(f"FAISS index not found at {index_path}")
         st.stop()
 
     index = FAISS.load_local(
@@ -47,28 +43,36 @@ def load_faiss():
 faiss_index = load_faiss()
 
 def ask_gemini(query, top_k=5):
-    risultati = faiss_index.similarity_search(query, k=top_k)
-    if not risultati:
-        return "Nessun documento rilevante trovato."
+    results = faiss_index.similarity_search(query, k=top_k)
+    if not results:
+        return "No relevant documents found."
 
-    contesto = "\n\n".join([r.page_content for r in risultati])
-    prompt = f""" Sei l'assistente personale di Vincenzo Colella che risponde solo utilizzando le informazioni presenti nel contesto fornito. Il contesto contiene estratti di documenti personali, eventi, note, promemoria e altre informazioni relative all'utente. La domanda è: {query} - Usa solo i dati presenti nel contesto per formulare la risposta. - Se la domanda richiede di elencare eventi o dettagli temporali, estrai solo quelli rilevanti, e considera che oggi è {today}. - Mantieni la risposta precisa e allegra, con un tono amichevole e emoji quando appropriato. Ecco il contesto: {contesto} Risposta: """
-    modello = genai.GenerativeModel("gemini-1.5-flash")
-    risposta = modello.generate_content(prompt)
-    return risposta.text or "Il modello non ha generato una risposta."
+    context = "\n\n".join([r.page_content for r in results])
+    prompt = f"""You are Vincenzo Colella's personal assistant. You only reply using information found in the provided context. The context contains excerpts from personal documents, events, notes, reminders, and other user-related data. The question is: {query}
 
-# Funzione per gestire la chat in sessione e salvare domande su file
+- Only use information in the context to answer.
+- If the question asks for events or time-based details, extract only what's relevant, and note that today is {today}.
+- Keep the answer precise and cheerful, with a friendly tone and emojis when appropriate.
+
+Here is the context:
+{context}
+Answer:"""
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    response = model.generate_content(prompt)
+    return response.text or "The model did not generate a response."
+
+# Function to manage session chat and log user questions to file
 def add_message(role, content):
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     st.session_state.chat_history.append({"role": role, "content": content})
     if role == "user":
-        with open("log_domande.txt", "a", encoding="utf-8") as f:
+        with open("log_questions.txt", "a", encoding="utf-8") as f:
             f.write(content.strip() + "\n")
 
-# Setup pagina e stile
+# Page setup and style
 st.set_page_config(
-    page_title="Assistant personale di Vincenzo Colella 🤖",
+    page_title="Vincenzo Colella's Personal Assistant 🤖",
     page_icon="🤵‍♂️",
     layout="centered",
     initial_sidebar_state="collapsed"
@@ -105,36 +109,36 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.title("🤵‍♂️ Assistente personale di Vincenzo Colella")
+st.title("🤵‍♂️ Vincenzo Personal Assistant")
 st.write(
-    "Fai domande sui tuoi documenti personali, eventi, promemoria e altro. "
-    "Ricevi risposte basate sui tuoi dati indicizzati."
+    "Ask questions about Vincenzo's documents, events, reminders, and more. "
 )
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-user_input = st.text_input("✍️ Inserisci la domanda:", key="input_box")
+user_input = st.text_input("✍️ Enter your question:", key="input_box")
 
 submit_disabled = not user_input.strip()
 
-if st.button("🚀 Invia", disabled=submit_disabled):
+if st.button("🚀 Send", disabled=submit_disabled):
     add_message("user", user_input)
-    with st.spinner("🤖 Sto elaborando la risposta..."):
+    with st.spinner("🤖 Generating response..."):
         try:
-            risposta = ask_gemini(user_input)
+            response = ask_gemini(user_input)
         except Exception as e:
-            risposta = f"❌ Errore nella generazione della risposta: {e}"
-        add_message("bot", risposta)
-# Visualizza chat (solo risposte del bot e domande, ma senza mostrarle in sidebar)
+            response = f"❌ Error generating response: {e}"
+        add_message("bot", response)
+
+# Display chat (bot and user messages, not in sidebar)
 for msg in reversed(st.session_state.chat_history):
     css_class = "user-message" if msg["role"] == "user" else "bot-message"
     st.markdown(f'<div class="chat-message {css_class}">{msg["content"]}</div>', unsafe_allow_html=True)
 
 st.markdown("---")
-st.markdown("© 2025 Vincenzo Colella — Powered by HuggingFace, FAISS e Gemini Flash LLM 🤖")
+st.markdown("© 2025 Vincenzo Colella — Powered by HuggingFace, FAISS and Gemini Flash LLM 🤖")
 
-# Easter egg: mostra domande dopo 10 clic
+# Easter egg: show questions after 10 clicks
 if "easter_egg_counter" not in st.session_state:
     st.session_state.easter_egg_counter = 0
 
@@ -142,12 +146,12 @@ if st.button("🕹️", key="easter_button"):
     st.session_state.easter_egg_counter += 1
 
 if st.session_state.easter_egg_counter >= 10:
-    st.success("🎉 Hai sbloccato l’easter egg!")
+    st.success("🎉 You unlocked the easter egg!")
     try:
-        with open("log_domande.txt", "r", encoding="utf-8") as f:
-            domande = f.readlines()
-        st.markdown("### 📜 Domande registrate:")
-        for domanda in domande:
-            st.markdown(f"- {domanda.strip()}")
+        with open("log_questions.txt", "r", encoding="utf-8") as f:
+            questions = f.readlines()
+        st.markdown("### 📜 Logged Questions:")
+        for question in questions:
+            st.markdown(f"- {question.strip()}")
     except FileNotFoundError:
-        st.error("Il file 'log_domande.txt' non è stato trovato.")
+        st.error("The file 'log_questions.txt' was not found.")

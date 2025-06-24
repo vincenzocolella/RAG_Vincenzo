@@ -16,6 +16,7 @@ __pycache__/
 # Dati locali, cartelle di embeddings o output pesanti
 parsed/
 output/
+documents_for_training/
 
 # File di sistema
 .DS_Store
