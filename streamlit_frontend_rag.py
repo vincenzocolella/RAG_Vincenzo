@@ -133,3 +133,21 @@ for msg in reversed(st.session_state.chat_history):
 
 st.markdown("---")
 st.markdown("© 2025 Vincenzo Colella — Powered by HuggingFace, FAISS e Gemini Flash LLM 🤖")
+
+# Easter egg: mostra domande dopo 10 clic
+if "easter_egg_counter" not in st.session_state:
+    st.session_state.easter_egg_counter = 0
+
+if st.button("🕹️", key="easter_button"):
+    st.session_state.easter_egg_counter += 1
+
+if st.session_state.easter_egg_counter >= 10:
+    st.success("🎉 Hai sbloccato l’easter egg!")
+    try:
+        with open("log_domande.txt", "r", encoding="utf-8") as f:
+            domande = f.readlines()
+        st.markdown("### 📜 Domande registrate:")
+        for domanda in domande:
+            st.markdown(f"- {domanda.strip()}")
+    except FileNotFoundError:
+        st.error("Il file 'log_domande.txt' non è stato trovato.")
