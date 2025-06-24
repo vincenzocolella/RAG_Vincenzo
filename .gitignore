@@ -1,0 +1,27 @@
+# Ambiente virtuale
+.venv/
+venv/
+env/
+ENV/
+
+# File di configurazione locali con chiavi API, credenziali, ecc
+config/.env
+credentials_google.json
+log_domande.txt
+
+# File di cache e temporanei Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Dati locali, cartelle di embeddings o output pesanti
+embeddings/
+parsed/
+output/
+
+# File di sistema
+.DS_Store
+Thumbs.db
+
+# File di log
+*.log
